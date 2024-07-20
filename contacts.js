@@ -51,7 +51,7 @@ async function addContact(data) {
   try {
     const contactsList = await listContacts();
     contactsList.push(contact);
-    overwriteContacts(contactsPath, contactsList);
+    await overwriteContacts(contactsPath, contactsList);
     return contact;
   } catch (err) {
     console.error(err);
