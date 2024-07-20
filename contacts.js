@@ -1,15 +1,10 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { nanoid } from 'nanoid';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const contactsPath = path.join(__dirname, 'db', 'contacts.json');
-
-const getNanoid = async () => {
-  const { nanoid } = await import('nanoid');
-  return nanoid;
-};
+const contactsPath = path.resolve('db', 'contacts.json');
+const overwriteContacts = async (path, list) =>
+  await fs.writeFile(path, JSON.stringify(list, null, 2));
 
 async function listContacts() {
   try {
@@ -37,7 +32,7 @@ async function removeContact(contactId) {
 
     if (contactIdx !== -1) {
       const removedContact = contactsList.splice(contactIdx, 1);
-      await fs.writeFile(contactsPath, JSON.stringify(contactsList));
+      await overwriteContacts(contactsPath, contactsList);
       return removedContact;
     } else {
       return null;
@@ -47,19 +42,16 @@ async function removeContact(contactId) {
   }
 }
 
-async function addContact(name, email, phone) {
-  const nanoid = await getNanoid();
+async function addContact(data) {
   const contact = {
     id: nanoid(),
-    name,
-    email,
-    phone,
+    ...data,
   };
 
   try {
     const contactsList = await listContacts();
     contactsList.push(contact);
-    await fs.writeFile(contactsPath, JSON.stringify(contactsList));
+    overwriteContacts(contactsPath, contactsList);
     return contact;
   } catch (err) {
     console.error(err);

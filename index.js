@@ -17,7 +17,7 @@ program.parse();
 
 const options = program.opts();
 
-async function invokeAction({ action, id, name, email, phone }) {
+async function invokeAction({ action, id, ...data }) {
   switch (action) {
     case 'list':
       const list = await listContacts();
@@ -26,17 +26,17 @@ async function invokeAction({ action, id, name, email, phone }) {
 
     case 'get':
       const requiredContact = await getContactById(id);
-      console.log('requiredContact: ', requiredContact)
+      console.log('requiredContact: ', requiredContact);
       break;
 
     case 'add':
-      const addedContact = await addContact(name, email, phone);
-      console.log('addedContact', addedContact)
+      const addedContact = await addContact(data);
+      console.log('addedContact', addedContact);
       break;
 
     case 'remove':
       const removedContact = await removeContact(id);
-      console.log('removedContact: ', removedContact)
+      console.log('removedContact: ', removedContact);
       break;
 
     default:
